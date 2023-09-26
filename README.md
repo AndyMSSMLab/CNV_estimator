@@ -44,17 +44,12 @@ The read depth for each Multicopy gene, Invariant gene, VNTR and their flanks we
 ```
 mosdepth -b "$PREFIX"_region.bed -f $GENOME -n $PREFIX $CRAM
 ```
-The raw read depth were converted to counts by multiplying read depth by size of each region and dividing by read length. The counts were then normalized using [GATK DenoiseReadCounts](https://gatk.broadinstitute.org/hc/en-us/articles/360040508731-DenoiseReadCounts)
+The raw read depth were normalized using the script GCbinsAndNorm.r.
  
 ## Quality Control
 - PCA: was generated using prcomp function in R and outliers were removed based on first 10 PCs by manual inspection
 - Density plots: were generated using density function in R and samples were outlier from the distribution were removed
  
-## Additional QC steps
-- Removing low variance VNTRs (standard deviation per sample < 25th percentile)
-- Removing confounding effects of larger CNVs (calVNTRflankCorrelation.r, filterSamplesVNTR.r)
-- Merging of multicopy genes in to gene groups (generateGeneGrp.r)
-
 ## PheWAS analysis
 - [REGENIE](https://rgcgithub.github.io/regenie/) on binary and quantitative traits on each TOPMed subcohort and Ancestry (runRegenie_binary.sh, runRegenie_quantitative.sh).
 - Merging of REGENIE output using [METAL](https://genome.sph.umich.edu/wiki/METAL_Documentation) (METAL_example_script.sh).
