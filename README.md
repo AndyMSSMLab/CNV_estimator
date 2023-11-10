@@ -12,11 +12,11 @@ cat simpleRepeat.txt| \
   awk 'BEGIN{OFS = "\t"}{print $1,$2,$3,$1":"$2"-"$3,$4,$5,$6}' > VNTR_100bp_10motif.bed
 ```
 
-Multicopy genes were defined from the results of CNVnator analysis. We utilized the top most variable genes in 625 [Human Genome Diversity Panel](https://www.internationalgenome.org/data-portal/data-collection/hgdp) cohort. The Exon coordinates of these RefSeq genes were downloaded from UCSC browser and 100bp padding was added each side of the exon.
+Multicopy genes were defined from the results of CNVnator analysis. We utilized the top most variable genes in 625 [Human Genome Diversity Panel](https://www.internationalgenome.org/data-portal/data-collection/hgdp) cohort. The Exon coordinates of these RefSeq genes were downloaded from UCSC browser and 500bp padding was added each side of the exon.
 
 ```
 cat Refseq_exon_hg38.txt |
-  awk 'BEGIN{OFS ="\t"}{print $1";"$4,$2-100,$3+100}' |
+  awk 'BEGIN{OFS ="\t"}{print $1";"$4,$2-500,$3+500}' |
   bedtools sort |
   bedtools merge -i stdin |
   sed -e 's/;/\t/' |
