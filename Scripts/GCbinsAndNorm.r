@@ -55,18 +55,18 @@ calGCcorrFac <- function(data,which.chr = c("Auto", "X", "Y")){
     mutate(n = ifelse(GC>89, meanRD_highGC$n, n)) 
   
   if(which.chr == "Auto"){ 
-    y = y %>% filter(n>=100)
+    y <- y %>% filter(n>=100)
   }else {
-    y = y %>% filter(n>=100 | GC>89)
+    y <- y %>% filter(n>=100 | GC>89)
   }
 
   missing_bins <- as.numeric(setdiff(as.character(1:89), as.character(y$GC)))
   
   missing_bins_rd <- lapply(missing_bins, function(bin){
-    upper = y %>% filter(GC>bin) %>% arrange(GC) %>% slice(1)
-    lower = y %>% filter(GC<bin) %>% arrange(desc(GC)) %>% slice(1)
-    if(nrow(lower) == 0){ lower = data.frame(GC=-1,median=-1,n=-1)}
-    if(nrow(upper) == 0){ upper = data.frame(GC=1000000,median=-1,n=-1)}
+    upper <- y %>% filter(GC>bin) %>% arrange(GC) %>% slice(1)
+    lower <- y %>% filter(GC<bin) %>% arrange(desc(GC)) %>% slice(1)
+    if(nrow(lower) == 0){ lower <- data.frame(GC=-1,median=-1,n=-1)}
+    if(nrow(upper) == 0){ upper <- data.frame(GC=1000000,median=-1,n=-1)}
     
     x  %>%
       filter(GC >=lower$GC & GC<=upper$GC) %>%
