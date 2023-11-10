@@ -64,8 +64,24 @@ The read depth for each Multicopy gene, Invariant gene, VNTR and their flanks we
 ```
 mosdepth -b chr_100bp.index.bed -f Homo_sapiens_assembly38.fasta -n $PREFIX $CRAM
 ```
-The raw read depth were normalized using the script GCbinsAndNorm.r.
- 
+
+Overlap regions of interest to 100bp bins
+```
+cat Example_RegionOfInterest.bed | tail -n +2 | \
+  bedtools sort | \
+  bedtools intersect -wa -wb -a stdin -b chr_100bp.gc.bed  | cut -f 1-9 > Example_RegionOfInterest_100bp.bed
+```
+
+The raw read depth were normalized using the script GCbinsAndNorm.r. Please note that the gender is required to correctly process X chromosome. 
+```
+Rscript  GCbinsAndNorm.r ${PREFIX}.regions.bed.gz  chr_100bp.gc.bed chrXY.bins.noPAR.noSegDup.bed.gz Example_RegionOfInterest_100bp.bed $gender
+```
+
+The following output files will be generated:
+- ${PREFIX}.norm.txt.gz :  contains the CN estimates for regions of interest
+- ${PREFIX}.GCbins.bed.gz : Summary stats and GC correction factors used for QC, gender check and normalization
+- ${PREFIX}.regions.fst : compressed output of mosdepth stored in FST format
+
 ## Quality Control
 - PCA: was generated using prcomp function in R and outliers were removed based on first 10 PCs by manual inspection
 - Density plots: were generated using density function in R and samples were outlier from the distribution were removed
