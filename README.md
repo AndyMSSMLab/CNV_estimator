@@ -38,11 +38,19 @@ cut -f 1-4 VNTR_100bp_10motif.bed |
   awk '$3==$6 || $2==$7'| cut -f 1-4 |
   bedtools sort > VNTR_100bp_10motif_1kb_flanks.bed
 ```
- 
+
+## Generating 100bp bins
+The whole genome was divided into non overlapping 100bp bins.
+```
+samtools faidx Homo_sapiens_assembly38.fasta
+cat Homo_sapiens_assembly38.fasta.fai | grep -v HLA | cut -f 1-2| awk '{print $1"\t0\t"$2}' | grep -v chrEBV > chr_regions.bed
+bedtools makewindows -w 100 -b chr_regions.bed > chr_100bp.bed
+```
+
 ## Read Depth generation and normalization
 The read depth for each Multicopy gene, Invariant gene, VNTR and their flanks were generated using [mosdepth](https://github.com/brentp/mosdepth).
 ```
-mosdepth -b "$PREFIX"_region.bed -f $GENOME -n $PREFIX $CRAM
+mosdepth -b chr_100bp.bed -f Homo_sapiens_assembly38.fasta -n $PREFIX $CRAM
 ```
 The raw read depth were normalized using the script GCbinsAndNorm.r.
  
