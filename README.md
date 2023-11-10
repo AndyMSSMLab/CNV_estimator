@@ -47,10 +47,22 @@ cat Homo_sapiens_assembly38.fasta.fai | grep -v HLA | cut -f 1-2| awk '{print $1
 bedtools makewindows -w 100 -b chr_regions.bed > chr_100bp.bed
 ```
 
+Get FASTA sequence for each 100 bp bin, get GC conent and index the file
+```
+bedtools getfasta -fi Homo_sapiens_assembly38.fasta -bed chr_100bp.bed > chr_100bp.fasta
+sh scripts/getGC.awk chr_100bp.fasta > chr_100bp.gc.txt
+cat  chr_100bp.gc.txt | tr ":" "\t" | tr "-" "\t" | cut -f 1-3,7 | bedtools sort -faidx Homo_sapiens_assembly38.fasta.fai > chr_100bp.gc.bed
+
+### Indexing 
+cat chr_100bp.gc.bed | awk 'BEGIN{ N=1; OFS = "\t"}{print $1,$2,$3,$4,N; N = N+1}' >foo
+mv foo chr_100bp.gc.bed
+cut -f 1-3,5 chr_100bp.gc.bed > chr_100bp.index.bed
+```
+
 ## Read Depth generation and normalization
 The read depth for each Multicopy gene, Invariant gene, VNTR and their flanks were generated using [mosdepth](https://github.com/brentp/mosdepth).
 ```
-mosdepth -b chr_100bp.bed -f Homo_sapiens_assembly38.fasta -n $PREFIX $CRAM
+mosdepth -b chr_100bp.index.bed -f Homo_sapiens_assembly38.fasta -n $PREFIX $CRAM
 ```
 The raw read depth were normalized using the script GCbinsAndNorm.r.
  
